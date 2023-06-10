@@ -4,7 +4,7 @@
 
 ```
 dependencies:
-  flutter_app_upgrade: ^1.1.0
+  flutter_upgrade: ^1.1.0
 ```
 
 2、执行flutter命令获取包：
