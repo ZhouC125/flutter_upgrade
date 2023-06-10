@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../flutter_app_upgrade.dart';
+import '../flutter_upgrade.dart';
 
 ///
 /// des:app升级提示控件
