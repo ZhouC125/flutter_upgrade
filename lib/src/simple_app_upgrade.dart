@@ -13,7 +13,7 @@ import 'liquid_progress_indicator.dart';
 /// des:app升级提示控件
 ///
 class SimpleAppUpgradeWidget extends StatefulWidget {
-  const SimpleAppUpgradeWidget(git branch -M main
+  const SimpleAppUpgradeWidget(
   {@required this.title,
         this.titleStyle,
         @required this.contents,
