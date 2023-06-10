@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import '../flutter_upgrade.dart';
 
 class FlutterUpgrade {
-  static const MethodChannel _channel = const MethodChannel('flutter_app_upgrade');
+  static const MethodChannel _channel = const MethodChannel('flutter_upgrade');
 
   ///
   /// 获取app信息
   ///
   static Future<AppInfo> get appInfo async {
     var result = await _channel.invokeMethod('getAppInfo');
+
     return AppInfo(
         versionName: result['versionName'],
         versionCode: result['versionCode'],

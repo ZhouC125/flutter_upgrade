@@ -65,7 +65,7 @@ class AppUpgrade {
             child: UnconstrainedBox(
               constrainedAxis: Axis.vertical,
               child: Container(
-                width: 288,
+                constraints: BoxConstraints(maxWidth: 328),
                 alignment: Alignment.center,
                 child: Builder(
                   builder: child,

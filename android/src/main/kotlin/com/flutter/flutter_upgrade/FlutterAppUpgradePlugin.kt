@@ -39,7 +39,7 @@ public class FlutterAppUpgradePlugin : FlutterPlugin, MethodCallHandler, Activit
 
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_app_upgrade")
+    val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_upgrade")
     channel.setMethodCallHandler(FlutterAppUpgradePlugin())
   }
 
@@ -49,7 +49,7 @@ public class FlutterAppUpgradePlugin : FlutterPlugin, MethodCallHandler, Activit
     @JvmStatic
     fun registerWith(registrar: Registrar) {
       this.mContext = registrar.context()
-      val channel = MethodChannel(registrar.messenger(), "flutter_app_upgrade")
+      val channel = MethodChannel(registrar.messenger(), "flutter_upgrade")
       channel.setMethodCallHandler(FlutterAppUpgradePlugin())
     }
   }

@@ -6,37 +6,39 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../flutter_upgrade.dart';
+import 'gradient_linear_progress_bar.dart';
 
 ///
 /// des:app升级提示控件
 ///
 class SimpleAppUpgradeWidget extends StatefulWidget {
   const SimpleAppUpgradeWidget(
-  {@required this.title,
-        this.titleStyle,
-        @required this.contents,
-        this.contentStyle,
-        this.cancelText,
-        this.cancelTextStyle,
-        this.okText,
-        this.okTextStyle,
-        this.okBackgroundColors,
-        this.progressBar,
-        this.progressBarColor,
-        this.borderRadius = 10,
-        this.downloadUrl,
-        this.force = false,
-        this.iosAppId,
-        this.appMarketInfo,
-        this.onError,
-        this.onOk,
-        this.downloadProgress,
-        this.downloadStatusChange});
+      {required this.title,
+      this.titleStyle,
+      this.contents,
+      this.contentStyle,
+      this.cancelText,
+      this.cancelTextStyle,
+      this.okText,
+      this.okTextStyle,
+      this.okBackgroundColors,
+      this.progressBar,
+      this.progressBarColor,
+      this.borderRadius = 10,
+      this.downloadUrl,
+      this.force = false,
+      this.iosAppId,
+      this.appMarketInfo,
+      this.onError,
+      this.onOk,
+      this.downloadProgress,
+      this.topWidget,
+      this.downloadStatusChange});
 
   ///
   /// 升级标题
   ///
-  final String? title;
+  final String title;
 
   ///
   /// 标题样式
@@ -114,10 +116,12 @@ class SimpleAppUpgradeWidget extends StatefulWidget {
   ///
   final AppMarketInfo? appMarketInfo;
 
-  final VoidCallback? onError;
+  final ValueChanged? onError;
   final VoidCallback? onOk;
   final DownloadProgressCallback? downloadProgress;
   final DownloadStatusChangeCallback? downloadStatusChange;
+
+  final Widget? topWidget;
 
   @override
   State<StatefulWidget> createState() => _SimpleAppUpgradeWidget();
@@ -143,61 +147,162 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
     return SizedBox(
       child: Stack(
         children: [
-          Align(
-            alignment: Alignment.center,
+          Positioned(
             child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                borderRadius: BorderRadius.circular((8)),
-                boxShadow: [
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(8),
+                ),
+                boxShadow: <BoxShadow>[
                   BoxShadow(
-                    offset: Offset(0, 0),
-                    blurRadius: 4,
-                    spreadRadius: 0,
-                    color: Color(0xFF000000).withOpacity(0.02),
-                  )
+                      offset: Offset(0, 4),
+                      blurRadius: 8,
+                      spreadRadius: 0,
+                      color: Color(0xFF000000).withOpacity(0.05))
                 ],
               ),
-              margin: const EdgeInsets.only(top: 68),
-              // color: Colors.blue,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  //标题
-                  _buildTitle(),
-                  //更新信息
-                  _buildAppInfo(),
-                  Divider(
-                    height: 1,
-                    color: Colors.grey,
-                  ),
-                  _buildDownloadProgress,
-
-                ],
-              ),
+              margin: EdgeInsets.only(top: 68),
+              padding: EdgeInsets.only(top: 87),
+              child: _buildDownloadProgress,
             ),
           ),
-          Positioned.fill(
+          Positioned(
             top: 0,
-            child: Container(
-              height: 145,
-              child:  Image.asset('images/update_bg.png'),
-            ),
+            right: 0,
+            left: 0,
+            child: widget.topWidget ??
+                Container(
+                  height: 145,
+                  width: 288,
+                ),
           )
         ],
       ),
     );
+  }
 
+  ///
+  /// 下载进度widget
+  ///
+  Widget get _buildDownloadProgress {
+    return StreamBuilder<double>(
+      stream: _streamController.stream,
+      builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+        if (!snapshot.hasData ||
+            (snapshot.data != null && snapshot.data! <= 0)) {
+          return _updateContents;
+        }
+        return _updateProgress(snapshot.data!);
+      },
+    );
+  }
+
+  ///
+  /// 发现新版本界面
+  ///
+  Widget get _updateContents => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          //标题
+          _buildTitle(widget.title),
+          //更新信息
+          _buildAppInfo(),
+          GestureDetector(
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 24,
+              ).copyWith(bottom: 24),
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(21)),
+                color: Color(0xFF0086FB),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '立即更新',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            onTap: _clickOk,
+          )
+        ],
+      );
+
+  ///
+  /// 更新版本界面
+  ///
+  Widget _updateProgress(double _s) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        //标题
+        _buildTitle('正在更新中'),
+        Container(
+            margin: EdgeInsets.only(top: 39, bottom: 6, left: 24, right: 40),
+            height: 22,
+            child: Stack(
+              children: [
+                GradientLinearProgressBar(
+                  strokeCapRound: true,
+                  strokeWidth: 22,
+                  colors: [Color(0xFF00BBFD), Color(0xFF0086FB)],
+                  backgroundColor: Color(0xFFF0F0F0),
+                  value: _s,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '${(_s * 100).toStringAsFixed(1)} %',
+                    style: TextStyle(color: Color(0xFF59595B), fontSize: 16),
+                  ),
+                )
+              ],
+            )),
+        Text(
+          _downloadStatus == DownloadStatus.error ? '下载异常' : '新版本正在更新中，请等候…',
+          style: TextStyle(
+              color: Color(0xFF000000).withOpacity(0.35), fontSize: 14),
+        ),
+        GestureDetector(
+          child: Container(
+            margin: EdgeInsets.only(top: 58, bottom: 32),
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: Text(
+              '取消更新',
+              style: TextStyle(
+                color: Color(0xFF000000).withOpacity(0.45),
+                fontSize: 18,
+              ),
+            ),
+          ),
+          onTap: () {
+            try {
+              _updateDownloadStatus(DownloadStatus.cancel);
+              cancelToken?.cancel();
+            } catch (e) {}
+          },
+        )
+      ],
+    );
   }
 
   ///
   /// 构建标题
   ///
-  _buildTitle() {
+  _buildTitle(String title) {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 20),
-        child: Text(widget.title ?? '',
-            style: widget.titleStyle ?? TextStyle(fontSize: 22)));
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Text(title,
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0086FB).withOpacity(0.85))));
   }
 
   ///
@@ -205,105 +310,24 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
   ///
   _buildAppInfo() {
     return Container(
-        margin: EdgeInsets.only(left: 15, right: 15,bottom: 10),
-        height: 200,
+        margin: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+        constraints: BoxConstraints(
+          maxHeight: 180,
+          minHeight: 130,
+        ),
         child: CupertinoScrollbar(
-          child: ListView(
-            children: widget.contents!.map((f) {
-              return Text(
-                f,
-                style: widget.contentStyle ?? TextStyle(),
-              );
-            }).toList(),
+          child: SingleChildScrollView(
+           child: Column(
+             children:widget.contents!.map((f) {
+               return Text(
+                 f,
+                 style: widget.contentStyle ??
+                     TextStyle(color: Color(0xFF59595B), fontSize: 18),
+               );
+             }).toList(),
+           ),
           ),
         ));
-  }
-
-  ///
-  /// 取消按钮
-  ///
-  Widget get _buildCancelActionButton{
-    return InkWell(
-        child: Container(
-          height: 45,
-          alignment: Alignment.center,
-          child: Text(widget.cancelText ?? '取消下载',
-              style: widget.cancelTextStyle ?? TextStyle()),
-        ),
-        onTap: () {
-          try {
-            _updateDownloadStatus(DownloadStatus.cancel);
-            cancelToken?.cancel();
-          } catch (e) {
-
-          }
-        }
-    );
-  }
-
-  ///
-  /// 确定按钮
-  ///
-  Widget get _buildOkActionButton{
-    return InkWell(
-      child: Container(
-        height: 50,
-        alignment: Alignment.center,
-        child: Text(widget.okText ?? '立即体验',
-            style: widget.okTextStyle ?? TextStyle(color: Colors.white,fontSize: 30)),
-      ),
-      onTap: () {
-        _clickOk();
-      },
-    );
-  }
-
-  ///
-  /// 下载进度widget
-  ///
-  Widget get _buildDownloadProgress{
-    return StreamBuilder<double>(
-      stream:_streamController.stream,
-      builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-        if(!snapshot.hasData || (snapshot.data != null && snapshot.data! <= 0)){
-          return SizedBox(
-            height: 50,
-            child: _buildOkActionButton,
-          );
-        }
-        return Container(
-          // height: 50,
-          padding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(child: Container(
-                      height: 5,
-                      decoration: new BoxDecoration(
-                        borderRadius: BorderRadius.circular((4)),
-                      ),
-                      child:ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        child: LinearProgressIndicator(
-                          backgroundColor:Color(0xFF000000).withOpacity(0.04),
-                          value: snapshot.data,
-                          valueColor: new AlwaysStoppedAnimation<Color>(_downloadStatus == DownloadStatus.error? Color(0xFF000000).withOpacity(0.25) : Color(0xFF538DFF)),
-                        ),
-                      )
-                  )),
-                  SizedBox(width: 10),
-                  Text('${(snapshot.data!*100).toStringAsFixed(1)} %')
-                ],
-              ),
-              _buildCancelActionButton
-            ],
-          ),
-        );
-      },
-    );
   }
 
   ///
@@ -340,9 +364,12 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
     _updateDownloadStatus(DownloadStatus.start);
     try {
       var dio = Dio();
-      cancelToken  = CancelToken();
-      await dio.download(url, path, cancelToken: cancelToken, onReceiveProgress: (int count, int total) {
-        if (total != -1 && (_downloadStatus == DownloadStatus.none || _downloadStatus == DownloadStatus.start )) {
+      cancelToken = CancelToken();
+      await dio.download(url, path, cancelToken: cancelToken,
+          onReceiveProgress: (int count, int total) {
+        if (total != -1 &&
+            (_downloadStatus == DownloadStatus.none ||
+                _downloadStatus == DownloadStatus.start)) {
           widget.downloadProgress?.call(count, total);
           _streamController.add(count / total.toDouble());
         }
@@ -353,21 +380,22 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
         _updateDownloadStatus(DownloadStatus.none);
       }).catchError((e) {
         _streamController.add(0);
-        if(_downloadStatus == DownloadStatus.cancel){
+        if (_downloadStatus == DownloadStatus.cancel) {
           return;
         }
+
         /// 下载出错
         /// 任务状态-失败，取消状态造成的下载报错 不处理
-        _updateDownloadStatus(DownloadStatus.error,error: e);
-        widget.onError?.call();
+        _updateDownloadStatus(DownloadStatus.error, error: e);
+        widget.onError?.call(e);
       });
     } catch (e) {
       print('$e');
       _streamController.add(0);
-      if(_downloadStatus == DownloadStatus.cancel){
+      if (_downloadStatus == DownloadStatus.cancel) {
         return;
       }
-      _updateDownloadStatus(DownloadStatus.error,error: e);
+      _updateDownloadStatus(DownloadStatus.error, error: e);
     }
   }
 
