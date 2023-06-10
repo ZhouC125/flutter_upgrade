@@ -1,8 +1,8 @@
-group 'com.flutter.flutter_app_upgrade'
+group 'com.flutter.flutter_upgrade'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.5.20'
     repositories {
         google()
         jcenter()

@@ -1,4 +1,4 @@
-package com.flutter.flutter_app_upgrade
+package com.flutter.flutter_upgrade
 
 import android.content.ActivityNotFoundException
 import android.content.Context

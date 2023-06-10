@@ -4,10 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_upgrade/flutter_app_upgrade.dart';
-import 'package:flutter_app_upgrade/src/download_status.dart';
 
-import 'liquid_progress_indicator.dart';
+import '../flutter_app_upgrade.dart';
 
 ///
 /// des:app升级提示控件
@@ -182,14 +180,8 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
           Positioned.fill(
             top: 0,
             child: Container(
-              decoration:BoxDecoration(
-                  // image:DecorationImage(
-                  //   image:AssetImage('images/背景.png'),
-                  //   fit: BoxFit.cover,
-                  // )
-              ),
               height: 145,
-              child:  Image.asset('tools_lib/flutter_app_upgrade/images/update_bg.png'),
+              child:  Image.asset('images/update_bg.png'),
             ),
           )
         ],

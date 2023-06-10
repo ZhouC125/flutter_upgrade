@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_app_upgrade/flutter_app_upgrade.dart';
-
 import 'download_status.dart';
-import 'simple_app_upgrade.dart';
 
 ///
 /// des:App 升级组件
