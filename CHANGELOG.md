@@ -18,3 +18,6 @@
 ## [2.0.0]
 
 * 1、Update minimum flutter version to 3.0.
+## [3.0.0]
+
+* 1、整体功能全面优化
