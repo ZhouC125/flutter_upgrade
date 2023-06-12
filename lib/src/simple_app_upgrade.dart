@@ -163,7 +163,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
                 ],
               ),
               margin: EdgeInsets.only(top: 68),
-              padding: EdgeInsets.only(top: 87),
+              padding: EdgeInsets.only(top: 77),
               child: _buildDownloadProgress,
             ),
           ),
@@ -203,6 +203,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
   ///
   Widget get _updateContents => Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //标题
           _buildTitle(widget.title),
@@ -223,7 +224,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
                 '立即更新',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -244,12 +245,12 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
         _buildTitle('正在更新中'),
         Container(
             margin: EdgeInsets.only(top: 39, bottom: 6, left: 24, right: 40),
-            height: 22,
+            height: 20,
             child: Stack(
               children: [
                 GradientLinearProgressBar(
                   strokeCapRound: true,
-                  strokeWidth: 22,
+                  strokeWidth: 20,
                   colors: [Color(0xFF00BBFD), Color(0xFF0086FB)],
                   backgroundColor: Color(0xFFF0F0F0),
                   value: _s,
@@ -258,7 +259,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
                   alignment: Alignment.centerRight,
                   child: Text(
                     '${(_s * 100).toStringAsFixed(1)} %',
-                    style: TextStyle(color: Color(0xFF59595B), fontSize: 16),
+                    style: TextStyle(color: Color(0xFF59595B), fontSize: 14),
                   ),
                 )
               ],
@@ -266,7 +267,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
         Text(
           _downloadStatus == DownloadStatus.error ? '下载异常' : '新版本正在更新中，请等候…',
           style: TextStyle(
-              color: Color(0xFF000000).withOpacity(0.35), fontSize: 14),
+              color: Color(0xFF000000).withOpacity(0.35), fontSize: 12),
         ),
         GestureDetector(
           child: Container(
@@ -277,7 +278,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
               '取消更新',
               style: TextStyle(
                 color: Color(0xFF000000).withOpacity(0.45),
-                fontSize: 18,
+                fontSize: 16,
               ),
             ),
           ),
@@ -296,11 +297,12 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
   /// 构建标题
   ///
   _buildTitle(String title) {
-    return Padding(
+    return Container(
+      alignment: Alignment.center,
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Text(title,
             style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF0086FB).withOpacity(0.85))));
   }
@@ -312,17 +314,18 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
         constraints: BoxConstraints(
-          maxHeight: 180,
-          minHeight: 130,
+          maxHeight: 160,
+          minHeight: 110,
         ),
         child: CupertinoScrollbar(
           child: SingleChildScrollView(
            child: Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
              children:widget.contents!.map((f) {
                return Text(
                  f,
                  style: widget.contentStyle ??
-                     TextStyle(color: Color(0xFF59595B), fontSize: 18),
+                     TextStyle(color: Color(0xFF59595B), fontSize: 16),
                );
              }).toList(),
            ),
