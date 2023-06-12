@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
   }
 
   _checkAppUpgrade() {
-    UpgradeUtils.firUpdate(context, onOk: () {
+    UpgradeUtils.firUpdate(context, onOk: (v) {
       print('获取更新成功');
     }, onError: (error) {
       print('获取更新失败：${error.toString()}');
