@@ -26,7 +26,7 @@ class UpgradeUtils  {
   }
 
   ///用于fir渠道升级
-  static void firUpdate(BuildContext context,{VoidCallback? onOk, ValueChanged? onError,Widget? topWidget}) async{
+  static void firUpdate(BuildContext context,{ValueChanged? onOk, ValueChanged? onError,Widget? topWidget}) async{
     _appInfo = await FlutterUpgrade.appInfo;
     if(_firApiToken == null){
       throw Exception('请先调用init方法初始化');
@@ -50,7 +50,9 @@ class UpgradeUtils  {
                 ],
                 force: true,
                 downloadUrl: data['direct_install_url'],
-                onOk: onOk,
+                onOk: (){
+                  onOk?.call(data['update_url']);
+                },
                 onError:onError,
                 iosAppId: _appStoreId,
                 topWidget: topWidget,
