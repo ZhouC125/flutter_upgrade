@@ -15,7 +15,7 @@ flutter pub get`
 3、引入
 
 ```
-import 'package:flutter_app_upgrade/flutter_app_upgrade.dart';
+import 'package:flutter_upgrade/flutter_upgrade.dart';
 
 ```
 
