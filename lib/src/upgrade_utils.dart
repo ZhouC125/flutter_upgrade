@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../flutter_upgrade.dart';
 import 'simple_app_upgrade.dart';
@@ -16,9 +17,9 @@ class UpgradeUtils  {
   //app store的id
   static String? _appStoreId;
   //app信息
-  static AppInfo? _appInfo;
+  static PackageInfo? _appInfo;
 
-  static AppInfo? get appInfo => _appInfo;
+  static PackageInfo? get appInfo => _appInfo;
 
   static void init({String? firApiToken,String? appStoreId}) async{
     UpgradeUtils._firApiToken = firApiToken;
@@ -27,7 +28,7 @@ class UpgradeUtils  {
 
   ///用于fir渠道升级
   static void firUpdate(BuildContext context,{ValueChanged? onOk, ValueChanged? onError,Widget? topWidget}) async{
-    _appInfo = await FlutterUpgrade.appInfo;
+    _appInfo = await PackageInfo.fromPlatform();
     if(_firApiToken == null){
       throw Exception('请先调用init方法初始化');
     }
@@ -39,7 +40,7 @@ class UpgradeUtils  {
     dio.get('https://api.bq04.com/apps/latest/${_appInfo?.packageName}', queryParameters: params).then((value) {
       if(value.statusCode == 200){
         var data = value.data;
-        if(data['build'] != null && int.parse(data['build']) > int.parse(appInfo!.versionCode!)){
+        if(data['build'] != null && int.parse(data['build']) > int.parse(appInfo!.buildNumber)){
           AppUpgrade.appUpgrade(
             context,
             (c){
